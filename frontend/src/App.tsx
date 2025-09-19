@@ -486,7 +486,8 @@ const App: React.FC = () => {
         integrityScore,
       };
 
-      const postResponse = await fetch('/api/reports', {
+      const apiUrl = import.meta.env.API_URL;
+      const postResponse = await fetch(`${apiUrl}/reports`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(reportData)
@@ -498,7 +499,8 @@ const App: React.FC = () => {
       }
 
       addLog(`Report saved with ID: ${postResult.reportId}. Fetching report...`);
-      const getResponse = await fetch(`/api/reports/${postResult.reportId}`);
+      
+      const getResponse = await fetch(`${apiUrl}/reports/${postResult.reportId}`);
       const fetchedReport = await getResponse.json();
 
       if (!getResponse.ok) {
