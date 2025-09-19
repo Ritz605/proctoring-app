@@ -1,12 +1,9 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
-import { createRoot } from 'react-dom/client';
 
-// --- Type Definitions ---
 interface ReportData {
   candidateName: string;
   interviewDuration: string;
   focusLostCount: number;
-  // Renamed to match the backend response
   facesDetectedCount: number; 
   absenceCount: number;
   phoneDetectedCount: number;
@@ -76,7 +73,6 @@ const ReportCard: React.FC<{ report: ReportData; onClose: () => void }> = ({ rep
         <li className="flex items-center gap-2"><FaUserCircle /><span className="font-semibold text-white">Candidate Name:</span> {report.candidateName}</li>
         <li className="flex items-center gap-2"><FaVideo /><span className="font-semibold text-white">Interview Duration:</span> {report.interviewDuration}</li>
         <li className="flex items-center gap-2"><FaEyeSlash /><span className="font-semibold text-white">Candidate Absence Count:</span> {report.absenceCount}</li>
-        {/* Updated to use facesDetectedCount from the report data */}
         <li className="flex items-center gap-2"><FaUsers /><span className="font-semibold text-white">Multiple Faces Detected:</span> {report.facesDetectedCount}</li>
         <li className="flex items-center gap-2"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" className="w-4 h-4 text-teal-400 fill-current"><path d="M16 64c0-12.9 8.3-24.3 20.9-28.7L224 5.3V48L48 90.7V400H24c-13.3 0-24 10.7-24 24s10.7 24 24 24H248c13.3 0 24-10.7 24-24s-10.7-24-24-24H224V80.8L448 48v24L264 90.7V400h24c13.3 0 24 10.7 24 24s-10.7 24-24 24H288v48H472c13.3 0 24-10.7 24-24s-10.7-24-24-24H448V80.8L264 48V5.3c-12.6-4.4-24.9 1.1-28.7 13.5L16 64zm432 0V400H416V64h32z" /></svg><span className="font-semibold text-white">Phones Detected:</span> {report.phoneDetectedCount}</li>
         <li className="flex items-center gap-2"><LuFileSignature /><span className="font-semibold text-white">Notes Detected:</span> {report.notesDetectedCount}</li>
@@ -92,7 +88,6 @@ const ReportCard: React.FC<{ report: ReportData; onClose: () => void }> = ({ rep
   </div>
 );
 
-// Worker Script as a string
 const proctoringWorkerScript = `
 self.importScripts('https://docs.opencv.org/4.7.0/opencv.js');
 self.importScripts('https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@3.14.0/dist/tf.min.js');
@@ -220,10 +215,9 @@ const App: React.FC = () => {
   const [isLoadFailed, setIsLoadFailed] = useState<boolean>(false);
   const [interviewTime, setInterviewTime] = useState(0);
 
-  // Stats for the report
+
   const [stats, setStats] = useState({
-    candidateName: 'John Doe', // Placeholder, could be an input field
-    // Renamed to match the report key
+    candidateName: 'John Doe', 
     facesDetectedCount: 0,
     absenceCount: 0,
     phoneDetectedCount: 0,
@@ -231,7 +225,6 @@ const App: React.FC = () => {
     focusLostCount: 0,
   });
 
-  // Use a ref to hold the current state of isInterviewActive to prevent stale closures
   const isInterviewActiveRef = useRef(isInterviewActive);
   useEffect(() => {
     isInterviewActiveRef.current = isInterviewActive;
@@ -252,15 +245,12 @@ const App: React.FC = () => {
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    // Set canvas dimensions to match video
     canvas.width = video.videoWidth;
     canvas.height = video.videoHeight;
 
-    // Draw video frame first
     ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
     
-    // Draw face bounding boxes
-    ctx.strokeStyle = '#34d399'; // Tailwind green-400
+    ctx.strokeStyle = '#34d399'; 
     ctx.lineWidth = 4;
     faces.forEach(face => {
       ctx.strokeRect(face.x, face.y, face.width, face.height);
@@ -269,7 +259,7 @@ const App: React.FC = () => {
     // Draw object bounding boxes and labels
     objects.forEach((obj) => {
       const [x, y, width, height] = obj.bbox;
-      ctx.strokeStyle = '#6366f1'; // Tailwind indigo-500
+      ctx.strokeStyle = '#6366f1'; 
       ctx.lineWidth = 2;
       ctx.strokeRect(x, y, width, height);
 
@@ -333,7 +323,7 @@ const App: React.FC = () => {
         URL.revokeObjectURL(workerUrl);
       }
     };
-  }, [addLog, drawDetections]); // isInterviewActive is no longer a dependency here
+  }, [addLog, drawDetections]); 
 
   const getMediaStream = async () => {
     try {
@@ -360,7 +350,6 @@ const App: React.FC = () => {
     const recorder = new MediaRecorder(stream, options);
     recorder.ondataavailable = (event: BlobEvent) => {
       if (event.data.size > 0) {
-        // Data can be sent to a backend here for storage.
       }
     };
     recorder.start(500);
@@ -441,9 +430,7 @@ const App: React.FC = () => {
 
   const calculateIntegrityScore = (currentStats: typeof stats) => {
     let score = 100;
-    // We now subtract points for absence count instead of focus lost count
     score -= currentStats.absenceCount * 2;
-    // Use facesDetectedCount from stats
     score -= currentStats.facesDetectedCount * 2;
     score -= currentStats.notesDetectedCount * 10;
     score -= currentStats.phoneDetectedCount * 15;
@@ -492,7 +479,6 @@ const App: React.FC = () => {
         candidateName: finalStats.candidateName,
         interviewDuration,
         focusLostCount: finalStats.focusLostCount,
-        // Send the correct key name to the backend
         multipleFacesCount: finalStats.facesDetectedCount,
         absenceCount: finalStats.absenceCount,
         phoneDetectedCount: finalStats.phoneDetectedCount,

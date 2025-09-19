@@ -1,9 +1,7 @@
-// Use dotenv to load environment variables from the .env file
+
 import 'dotenv/config';
 import mysql from 'mysql2/promise';
 
-// This function creates a connection pool and sets up the necessary table.
-// In a real application, database credentials should be stored in environment variables.
 const pool = mysql.createPool({
     host: process.env.DB_HOST,
     user: process.env.DB_USER,
@@ -18,8 +16,6 @@ async function setupDatabase(): Promise<void> {
     try {
         const connection = await pool.getConnection();
         
-        // This query creates the table if it doesn't already exist.
-        // It's crucial for the first run.
         await connection.query(`
             CREATE TABLE IF NOT EXISTS proctoring_reports (
                 id INT AUTO_INCREMENT PRIMARY KEY,

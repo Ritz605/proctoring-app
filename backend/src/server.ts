@@ -8,7 +8,6 @@ const PORT = process.env.PORT || 3001;
 app.use(cors());
 app.use(express.json());
 
-// Defines the structure of the data expected in the POST request body.
 interface ReportRequestBody {
     candidateName: string;
     interviewDuration: string;
@@ -23,8 +22,6 @@ interface ReportRequestBody {
 // API endpoint to save a new proctoring report
 app.post('/reports', async (req: Request<{}, {}, ReportRequestBody>, res: Response) => {
     try {
-        // Use a default value of 0 for all numerical fields to prevent 'null' or 'undefined' values
-        // from causing a 'NOT NULL' constraint error in the database.
         const {
             candidateName,
             interviewDuration,
@@ -78,7 +75,6 @@ app.get('/reports/:reportId', async (req: Request<{reportId: string}>, res: Resp
             facesDetectedCount: report.multiple_faces_count,
             notesDetectedCount: report.notes_detected_count,
             phoneDetectedCount: report.phone_detected_count,
-            // Added the absenceCount field to the response
             absenceCount: report.absence_count, 
             integrityScore: report.integrity_score,
         };
