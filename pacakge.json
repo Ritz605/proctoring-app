@@ -1,0 +1,25 @@
+{
+  "name": "video-proctoring-monorepo",
+  "version": "1.0.0",
+  "description": "A video proctoring system using React, Express, and Computer Vision (TensorFlow.js).",
+  "main": "index.js",
+  "scripts": {
+    "start": "npm run dev --workspace=backend",
+    "dev:frontend": "npm run dev --workspace=frontend",
+    "dev:backend": "npm run dev --workspace=backend",
+    "install:all": "npm install"
+  },
+  "keywords": [
+    "react",
+    "express",
+    "typescript",
+    "tensorflowjs",
+    "mysql"
+  ],
+  "author": "",
+  "license": "ISC",
+  "workspaces": [
+    "frontend",
+    "backend"
+  ]
+}
